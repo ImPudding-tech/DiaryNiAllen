@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hugot Central</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; text-align: center; }
+    .card { border: 1px solid #ccc; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); }
+    textarea { width: 100%; height: 80px; }
+    button { background-color: #007bff; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; margin-top: 10px;}
+    button:hover { background-color: #0056b3; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+  <h1>💔 Hugot Central 💔</h1>
+
+  <button onclick="showSection('submit')">Submit Hugot</button>
+  <button onclick="showSection('rate')">Rate Hugots</button>
+
+  <hr>
+
+  <div id="submitSection" class="card">
+    <h2>Submit your Hugot</h2>
+    <textarea id="hugotInput" placeholder="Type your mapanakit na lines here..."></textarea>
+    <br>
+    <input type="text" id="authorInput" placeholder="Author Name (Optional)">
+    <br>
+    <button onclick="submitHugot()">Send Hugot</button>
+    <p id="submitStatus"></p>
+  </div>
+
+  <div id="rateSection" class="card hidden">
+    <h2>Rate this Hugot</h2>
+    <p id="displayHugot" style="font-size: 1.2em; font-style: italic;">Loading...</p>
+    <div>
+      <button onclick="rateHugot(1)">1 ⭐</button>
+      <button onclick="rateHugot(3)">3 ⭐</button>
+      <button onclick="rateHugot(5)">5 ⭐</button>
+    </div>
+    <br>
+    <button onclick="loadRandomHugot()">Skip / Next</button>
+  </div>
+
+  <script>
+    const SCRIPT_URL = "YOUR_WEB_APP_URL"; // PASTE YOUR URL HERE!
+
+    let allHugots = [];
+    let currentHugot = "";
+
+    function showSection(section) {
+      document.getElementById('submitSection').classList.add('hidden');
+      document.getElementById('rateSection').classList.add('hidden');
+      
+      if(section === 'submit') {
+        document.getElementById('submitSection').classList.remove('hidden');
+      } else {
+        document.getElementById('rateSection').classList.remove('hidden');
+        fetchHugots(); // Load data when opening rate section
+      }
+    }
+
+    // --- SUBMISSION LOGIC ---
+    function submitHugot() {
+      const text = document.getElementById('hugotInput').value;
+      const author = document.getElementById('authorInput').value;
+      const statusBtn = document.getElementById('submitStatus');
+
+      if(!text) return alert("Walang laman? Parang puso mo lang?");
+
+      statusBtn.innerText = "Sending...";
+      
+      fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: "submitHugot", hugot: text, author: author })
+      })
+      .then(response => response.json())
+      .then(data => {
+        statusBtn.innerText = "Sent! Salamat sa sakit.";
+        document.getElementById('hugotInput').value = "";
+      });
+    }
+
+    // --- RATING LOGIC ---
+    function fetchHugots() {
+      fetch(SCRIPT_URL)
+      .then(res => res.json())
+      .then(data => {
+        allHugots = data;
+        loadRandomHugot();
+      });
+    }
+
+    function loadRandomHugot() {
+      if (allHugots.length === 0) {
+        document.getElementById('displayHugot').innerText = "No hugots yet. Be the first!";
+        return;
+      }
+      const randomIndex = Math.floor(Math.random() * allHugots.length);
+      currentHugot = allHugots[randomIndex].text;
+      document.getElementById('displayHugot').innerText = '"' + currentHugot + '"';
+    }
+
+    function rateHugot(score) {
+      if (!currentHugot) return;
+      
+      fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: "rateHugot", hugotText: currentHugot, rating: score })
+      })
+      .then(() => {
+        alert("Rated! Next hugot...");
+        loadRandomHugot();
+      });
+    }
+  </script>
+
+</body>
+</html>
