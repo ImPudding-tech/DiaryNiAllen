@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Hugot Wall</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Hugot Wall</h1>
+
+    <section id="submit-section" class="card">
+      <h2>Submit a Hugot</h2>
+      <form id="hugot-form">
+        <textarea id="hugot-text" placeholder="Write your hugot..." required></textarea>
+        <div class="row">
+          <input id="hugot-author" placeholder="Your name (optional)" />
+          <button type="submit">Send</button>
+        </div>
+      </form>
+      <div id="submit-msg" class="muted"></div>
+    </section>
+
+    <section id="hugot-list-section" class="card">
+      <h2>Rate Hugots</h2>
+      <div id="hugot-list">Loading...</div>
+    </section>
+  </main>
+
+  <script>
+    // Set this to the Apps Script web app URL after you deploy it.
+    // Example: https://script.google.com/macros/s/AKfycbx.../exec
+    const WEB_APP_URL = "YOUR_APPS_SCRIPT_WEB_APP_URL";
+  </script>
+  <script src="assets/js/app.js"></script>
+</body>
+          </html>
